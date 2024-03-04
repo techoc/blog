@@ -1,16 +1,16 @@
 # Configure main menu and social menu
-#[[main]]
-#identifier = "home"
-#name = "Home"
-#url = "/"
-#[main.params]
-#icon = "home"
-#newtab = true
+# [[main]]
+# identifier = "Kubernetes"
+# name = "Kubernetes"
+# url = "https://www.baidu.com"
+# [main.params]
+# icon = "home"
+# newtab = true
 
 [[social]]
 identifier = "github"
 name = "GitHub"
-url = "https://github.com/CaiJimmy/hugo-theme-stack"
+url = "https://github.com/techoc"
 
 [social.params]
 icon = "brand-github"
