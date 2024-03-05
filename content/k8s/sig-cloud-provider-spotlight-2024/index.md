@@ -2,7 +2,10 @@
 title: 'Spotlight on SIG Cloud Provider'
 date: 2024-03-02T16:30:31+08:00
 draft: false  
-tags: ["kubernetes"]
+tags:
+  - Kubernetes
+  - SIG
+categories: ["Kubernetes"]
 image: "https://www4.bing.com//th?id=OHR.LeapingSquirrel_ZH-CN9112090462_1920x1080.jpg&rf=LaDigue_1920x1080.jpg&pid=hp"
 ---
 
