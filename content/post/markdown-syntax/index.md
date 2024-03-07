@@ -10,6 +10,7 @@ tags:
 categories:
     - themes
     - syntax
+image: https://cn.bing.com/th?id=OHR.WahclellaFalls_ZH-CN4932852217_1920x1080.jpg&rf=LaDigue_1920x1080.jpg&pid=hp
 ---
 
 This article offers a sample of basic Markdown syntax that can be used in Hugo content files, also it shows whether basic HTML elements are decorated with CSS in a Hugo theme.
