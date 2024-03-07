@@ -1,15 +1,16 @@
 ---
-title: 'Spotlight on SIG Cloud Provider'
+title: '聚焦 SIG 云提供商'
+description: 'Spotlight on SIG Cloud Provider'
 date: 2024-03-02T16:30:31+08:00
-draft: false
-tags:
-  - Kubernetes
-  - SIG
+image: "https://www4.bing.com//th?id=OHR.LeapingSquirrel_ZH-CN9112090462_1920x1080.jpg"
+tags: ["Kubernetes","Kubernetes blog"]
 categories: ["Kubernetes"]
-image: "https://www4.bing.com//th?id=OHR.LeapingSquirrel_ZH-CN9112090462_1920x1080.jpg&rf=LaDigue_1920x1080.jpg&pid=hp"
+slug: sig-cloud-provider-spotlight-2024
 ---
 
-作者：Arujjwal Negi 译者：Techoc
+作者：Arujjwal Negi 
+
+译者：[Rui Yang](https://github.com/techoc)
 
 开发者使用 Kubernetes 服务最流行的方式之一是通过云提供商，但您有没有想过云提供商如何做到这一点？ Kubernetes 与各种云提供商集成的整个过程是如何发生的？ 为了回答这个问题，让我们关注一下 [SIG 云提供商](https://github.com/kubernetes/community/blob/master/sig-cloud-provider/README.md)。
 

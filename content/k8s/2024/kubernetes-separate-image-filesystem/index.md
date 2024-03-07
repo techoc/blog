@@ -1,12 +1,10 @@
 ---
-title: "Image Filesystem: Configuring Kubernetes to store containers on a separate filesystem"
-description: "镜像文件系统：配置 Kubernetes 将容器存储在单独的文件系统上"
+title: "镜像文件系统：配置 Kubernetes 将容器存储在单独的文件系统上"
+description: "Image Filesystem: Configuring Kubernetes to store containers on a separate filesystem"
 date: 2024-03-06T00:08:00+08:00
 image: https://img.picgo.net/2024/03/05/_20240305223322f97c305c6e79f24e.jpeg
-hidden: false
-comments: true
-tags: ["Kubernetes", "Kubernetes blog"]
-categories: ["Kubernetes"]
+tags: [ "Kubernetes", "Kubernetes blog" ]
+categories: [ "Kubernetes" ]
 slug: kubernetes-separate-image-filesystem
 ---
 
@@ -25,31 +23,41 @@ slug: kubernetes-separate-image-filesystem
 
 **译者：** [Rui Yang](https://github.com/techoc)
 
-<!-- A common issue in running/operating Kubernetes clusters is running out of disk space.
-When the node is provisioned, you should aim to have a good amount of storage space for your container images and running containers. -->
+<!-- 
+A common issue in running/operating Kubernetes clusters is running out of disk space.
+When the node is provisioned, you should aim to have a good amount of storage space for your container images and running containers. 
+-->
 
 运行或者操作 Kubernetes 集群的一个常见问题是磁盘空间不足。
 在预分配节点时，你的目标应该是为容器镜像和正在运行的容器提供大量存储空间。
 
-<!-- The [container runtime](/docs/setup/production-environment/container-runtimes/) usually writes to `/var`.
+<!-- 
+The [container runtime](/docs/setup/production-environment/container-runtimes/) usually writes to `/var`.
 This can be located as a separate partition or on the root filesystem.
-CRI-O, by default, writes its containers and images to `/var/lib/containers`, while containerd writes its containers and images to `/var/lib/containerd`. -->
+CRI-O, by default, writes its containers and images to `/var/lib/containers`, while containerd writes its containers and images to `/var/lib/containerd`. 
+-->
 
 [容器运行时](https://kubernetes.io/docs/setup/production-environment/container-runtimes/)通常会写入到 `/var`目录下。
 他可以位于单独的分区或者位于根文件系统上。
-在默认情况下，CRI-O 将其容器和镜像写入 `/var/lib/containers`目录下，而 containerd 将其容器和镜像写入 `/var/lib/containerd`目录下。
+在默认情况下，CRI-O 将其容器和镜像写入 `/var/lib/containers`目录下，而 containerd 将其容器和镜像写入 `/var/lib/containerd`
+目录下。
 
-<!-- In this blog post, we want to bring attention to ways that you can configure your container runtime to store its content separately from the default partition.
-This allows for more flexibility in configuring Kubernetes and provides support for adding a larger disk for the container storage while keeping the default filesystem untouched. -->
+<!-- 
+In this blog post, we want to bring attention to ways that you can configure your container runtime to store its content separately from the default partition.
+This allows for more flexibility in configuring Kubernetes and provides support for adding a larger disk for the container storage while keeping the default filesystem untouched. 
+-->
 
 在这篇博文中，我们希望引起您的注意，您可以配置容器运行时以将其内容与默认分区分开存储。
 这使得配置 Kubernetes 变得更加灵活，并支持为容器存储添加更大的磁盘，同时保持默认文件系统不变。
 
-<!-- One area that needs more explaining is where/what Kubernetes is writing to disk. -->
+<!-- 
+One area that needs more explaining is where/what Kubernetes is writing to disk. 
+-->
 
 需要详细了解的是 Kubernetes 会写入到磁盘哪里以及写入哪些内容。
 
-<!-- ## Understanding Kubernetes disk usage
+<!-- 
+## Understanding Kubernetes disk usage
 
 Kubernetes has persistent data and ephemeral data. The base path for the kubelet and local
 Kubernetes-specific storage is configurable, but it is usually assumed to be `/var/lib/kubelet`.
@@ -59,11 +67,13 @@ In the Kubernetes docs, this is sometimes referred to as the root or node filesy
 - logs
 - and container runtime
 
-This is different from most POSIX systems as the root/node filesystem is not `/` but the disk that `/var/lib/kubelet` is on. -->
+This is different from most POSIX systems as the root/node filesystem is not `/` but the disk that `/var/lib/kubelet` is on. 
+-->
 
 ## 理解 Kubernetes 磁盘的使用
 
-Kubernetes 有持久化的数据和临时数据。kubelet 和本地 Kubernetes 特定的存储的根路径是可配置的，但是通常认为它位于 `/var/lib/kubelet`。在 Kubernetes 文档中，这有时被称为根或节点文件系统。该数据的大部分可以分为：
+Kubernetes 有持久化的数据和临时数据。kubelet 和本地 Kubernetes
+特定的存储的根路径是可配置的，但是通常认为它位于 `/var/lib/kubelet`。在 Kubernetes 文档中，这有时被称为根或节点文件系统。该数据的大部分可以分为：
 
 - 临时存储
 - 日志
@@ -71,35 +81,44 @@ Kubernetes 有持久化的数据和临时数据。kubelet 和本地 Kubernetes �
 
 这与大多数 POSIX 系统不同，因为根或者节点文件系统不是 `/`，而是 `/var/lib/kubelet` 所在的磁盘。
 
-<!-- ### Ephemeral storage
+<!-- 
+### Ephemeral storage
 
 Pods and containers can require temporary or transient local storage for their operation.
-The lifetime of the ephemeral storage does not extend beyond the life of the individual pod, and the ephemeral storage cannot be shared across pods. -->
+The lifetime of the ephemeral storage does not extend beyond the life of the individual pod, and the ephemeral storage cannot be shared across pods. 
+-->
 
 ### 临时存储
 
 Pod 和容器可能需要临时或暂时的本地存储来进行操作。
 临时存储的生命周期不会超过单个 pod 的生命周期，并且临时存储不能跨 pod 共享。
 
-<!-- ### Logs
+<!-- 
+### Logs
 
 By default, Kubernetes stores the logs of each running container, as files within `/var/log`.
-These logs are ephemeral and are monitored by the kubelet to make sure that they do not grow too large while the pods are running. -->
+These logs are ephemeral and are monitored by the kubelet to make sure that they do not grow too large while the pods are running. 
+-->
 
 ### 日志
 
 默认情况下，Kubernetes 会将每个运行容器的日志，作为文件存储在 `/var/log` 目录下。
-这些日志是临时的，由 kubelet 监控，以确保它们在运行期间不会变的太大。
+这些日志是临时的，由 kubelet 监控，以确保它们在运行期间不会变得太大。
 
-<!-- You can customize the [log rotation](/docs/concepts/cluster-administration/logging/#log-rotation) settings
+<!-- 
+You can customize the [log rotation](/docs/concepts/cluster-administration/logging/#log-rotation) settings
 for each node to manage the size of these logs, and configure log shipping (using a 3rd party solution)
-to avoid relying on the node-local storage. -->
+to avoid relying on the node-local storage. 
+-->
 
-你可以自定义每个节点的 [日志轮转](https://kubernetes.io/docs/concepts/cluster-administration/logging/#log-rotation)设置，以管理这些日志的大小，以及配置日志传输（使用第三方解决方案）以避免依赖于节点本地存储。
+你可以自定义每个节点的 [日志轮转](https://kubernetes.io/docs/concepts/cluster-administration/logging/#log-rotation)
+设置，以管理这些日志的大小，以及配置日志传输（使用第三方解决方案）以避免依赖于节点本地存储。
 
-<!-- ### Container runtime
+<!-- 
+### Container runtime
 
-The container runtime has two different areas of storage for containers and images. -->
+The container runtime has two different areas of storage for containers and images. 
+-->
 
 ### 容器运行时
 
@@ -112,8 +131,9 @@ The container runtime has two different areas of storage for containers and imag
 -->
 
 - 只读层: 镜像通常被标记为只读层，因为它们在容器运行时不会被修改。
-只读层可以由多个层组成，然后组合成一个单独的只读层。
-在容器的顶层上，有一个薄层提供容器的临时存储，如果容器在文件系统上写入，则其可以提供为临时存储。
+  只读层可以由多个层组成，然后组合成一个单独的只读层。
+  在容器的顶层上，有一个薄层提供容器的临时存储，如果容器在文件系统上写入，则其可以提供为临时存储。
+
 <!--
 - writeable layer: Depending on your container runtime, local writes might be
   implemented as a layered write mechanism (for example, `overlayfs` on Linux or CimFS on Windows).
@@ -129,7 +149,7 @@ The container runtime has two different areas of storage for containers and imag
 <!--
 The container runtime filesystem contains both the read-only layer and the writeable layer.
 This is considered the `imagefs` in Kubernetes documentation.
-  -->
+-->
 
 容器运行时文件系统包含只读层和可写层。
 在 Kubernetes 文档中，这被称为 `imagefs`。
@@ -190,11 +210,11 @@ graphroot = "/var/lib/containers/storage"
 -->
 
 - `graphroot`
-  - 容器运行时的持久数据存储
-  - 如果启用 SELinux，则必须与 `/var/lib/containers/storage` 相匹配
+    - 容器运行时的持久数据存储
+    - 如果启用 SELinux，则必须与 `/var/lib/containers/storage` 相匹配
 - `runroot`
-  - 临时访问容器的读/写访问
-  - 建议将此放在临时文件系统中
+    - 临时访问容器的读/写访问
+    - 建议将此放在临时文件系统中
 
 <!--
 Here is a quick way to relabel your graphroot directory to match `/var/lib/containers/storage`:
@@ -239,12 +259,12 @@ containerd 存储的相关字段是 `root` 和 `state`。
 -->
 
 - `root`
-  - 容器运行时元数据的根目录
-  - 默认位置为 `/var/lib/containerd`
-  - 如果您的操作系统需要，Root 也需要 SELinux 标签
+    - 容器运行时元数据的根目录
+    - 默认位置为 `/var/lib/containerd`
+    - 如果您的操作系统需要，Root 也需要 SELinux 标签
 - `state`
-  - 容器运行时的临时数据
-  - 默认位置为 `/run/containerd`
+    - 容器运行时的临时数据
+    - 默认位置为 `/run/containerd`
 
 <!--
 ## Kubernetes node pressure eviction
