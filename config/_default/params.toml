@@ -26,6 +26,7 @@ src = "https://s2.ax1x.com/2020/03/02/3RwF78.jpg"
 math = false
 readingTime = true
 
+
 [article.license]
 enabled = true
 default = "Licensed under CC BY-NC-SA 4.0"

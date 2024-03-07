@@ -1,7 +1,7 @@
 ---
 title: 'Spotlight on SIG Cloud Provider'
 date: 2024-03-02T16:30:31+08:00
-draft: false  
+draft: false
 tags:
   - Kubernetes
   - SIG
