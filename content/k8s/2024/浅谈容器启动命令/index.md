@@ -130,7 +130,7 @@ spec:
 hello
 ```
 
-即所执行的命令为 `bash -c echo hello`(Kubernetes yaml 中的 `command` )。
+即所执行的命令为 `bash -c echo hello bash`(Kubernetes yaml 中的 `command`+ Dockerfile 中的 `CMD`)。
 
 ### 只设置 `args`，不设置 `command`
 
@@ -185,3 +185,7 @@ hello
 ```
 
 即所执行的命令为 `bash -c echo hello`(Kubernetes yaml 中的 `command` + Kubernetes yaml 中的 `args`)。
+
+### 不设置 `command` 和 `args`
+
+即直接运行 Docker 镜像中的 `ENTRYPOINT` 和 `CMD`。
