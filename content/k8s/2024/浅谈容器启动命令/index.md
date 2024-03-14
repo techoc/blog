@@ -2,10 +2,7 @@
 title: "浅谈容器启动命令"
 description: "Dockerfile 中的 ENTRYPOINT 和 CMD 与 Kubernetes 中的 command 和 args"
 date: 2024-03-13T17:05:28+08:00
-image:
-math:
-license:
-hidden: false
+image: "https://cn.bing.com/th?id=OHR.AyutthayaTree_ZH-CN8075870220_1920x1080.jpg&rf=LaDigue_1920x1080.jpg&pid=hp"
 comments: true
 tags: ["Kubernetes"]
 categories: ["Kubernetes"]
