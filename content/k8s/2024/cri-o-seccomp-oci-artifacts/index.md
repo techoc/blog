@@ -1,5 +1,5 @@
 ---
-title: "CRI-O：应用来自OCI注册中心的seccomp配置文件"
+title: "CRI-O：应用来自 OCI 注册中心的 seccomp 配置文件"
 description: "CRI-O: Applying seccomp profiles from OCI registries"
 date: 2024-03-08T00:23:10+08:00
 image: https://s.cn.bing.net/th?id=OHR.IguazuFalls_ZH-CN4749837052_1920x1080.webp&qlt=50
