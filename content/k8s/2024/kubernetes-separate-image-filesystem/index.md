@@ -3,8 +3,8 @@ title: "镜像文件系统：配置 Kubernetes 将容器存储在单独的文件
 description: "Image Filesystem: Configuring Kubernetes to store containers on a separate filesystem"
 date: 2024-03-06T00:08:00+08:00
 image: https://img.picgo.net/2024/03/05/_20240305223322f97c305c6e79f24e.jpeg
-tags: [ "Kubernetes", "Kubernetes blog" ]
-categories: [ "Kubernetes" ]
+tags: ["Kubernetes", "Kubernetes blog", "翻译"]
+categories: ["Kubernetes"]
 slug: kubernetes-separate-image-filesystem
 ---
 

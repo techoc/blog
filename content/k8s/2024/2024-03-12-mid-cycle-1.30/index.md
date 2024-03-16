@@ -3,6 +3,8 @@ title: "Kubernetes v1.30 初探"
 description: "A Peek at Kubernetes v1.30"
 date: 2024-03-16T16:00:05+08:00
 image: "https://www.bing.com/th?id=OHR.BambooPanda_ZH-CN8455481760_1920x1080.jpg&rf=LaDigue_1920x1080.jpg&pid=hp"
+tags: ["Kubernetes", "Kubernetes blog", "翻译"]
+categories: ["Kubernetes"]
 slug: kubernetes-1-30-upcoming-changes
 ---
 

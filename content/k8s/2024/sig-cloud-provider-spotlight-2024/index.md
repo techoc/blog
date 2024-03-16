@@ -1,14 +1,14 @@
 ---
-title: '聚焦 SIG 云提供商'
-description: 'Spotlight on SIG Cloud Provider'
+title: "聚焦 SIG 云提供商"
+description: "Spotlight on SIG Cloud Provider"
 date: 2024-03-02T16:30:31+08:00
 image: "https://www4.bing.com//th?id=OHR.LeapingSquirrel_ZH-CN9112090462_1920x1080.jpg"
-tags: ["Kubernetes","Kubernetes blog"]
+tags: ["Kubernetes", "Kubernetes blog", "翻译"]
 categories: ["Kubernetes"]
 slug: sig-cloud-provider-spotlight-2024
 ---
 
-作者：Arujjwal Negi 
+作者：Arujjwal Negi
 
 译者：[Rui Yang](https://github.com/techoc)
 
@@ -16,17 +16,19 @@ slug: sig-cloud-provider-spotlight-2024
 
 SIG 云提供商致力于在 Kubernetes 和各种云提供商之间创建无缝集成。他们维持 Kubernetes 生态系统的公平性和开放性。通过制定清晰的标准和要求，以确保每个云提供商都能与 Kubernetes 良好协作。他们也负责配置集群组件以实现云提供商集成。
 
-在聚焦 SIG 系列的这篇博客中，Arujjwal Negi 采访了 Michael McCune (Red Hat)，又名 elmiko，SIG 云提供商的联合主席，让我们来  深入了解该小组的工作。
+在聚焦 SIG 系列的这篇博客中，Arujjwal Negi 采访了 Michael McCune (Red Hat)，又名 elmiko，SIG 云提供商的联合主席，让我们来 深入了解该小组的工作。
 
 ## 导言
-Arujjwal：让我们从了解你开始。你能给我们介绍一下你自己以及你是如何从事Kubernetes的吗？
 
-Michael：嗨，我是Michael McCune，社区里的大多数人都叫我的名字elmiko。我做软件开发人员已经有很长时间了(我刚开始的时候Windows 3.1很流行!)，我第一次接触Kubernetes是作为机器学习和数据科学应用程序的开发人员;当时我所在的团队正在创建教程和示例，以演示在Kubernetes上使用Apache Spark等技术。也就是说，我对分布式系统感兴趣已经很多年了，当有机会加入一个直接在Kubernetes上工作的团队时，我立刻就抓住了它!
+Arujjwal：让我们从了解你开始。你能给我们介绍一下你自己以及你是如何从事 Kubernetes 的吗？
+
+Michael：嗨，我是 Michael McCune，社区里的大多数人都叫我的名字 elmiko。我做软件开发人员已经有很长时间了(我刚开始的时候 Windows 3.1 很流行!)，我第一次接触 Kubernetes 是作为机器学习和数据科学应用程序的开发人员;当时我所在的团队正在创建教程和示例，以演示在 Kubernetes 上使用 Apache Spark 等技术。也就是说，我对分布式系统感兴趣已经很多年了，当有机会加入一个直接在 Kubernetes 上工作的团队时，我立刻就抓住了它!
 
 ## 功能和工作
+
 Arujjwal：您能否向我们介绍一下 SIG Cloud Provider 的业务及其运作方式？
 
-Michael：SIG Cloud Provider 的成立是确保 Kubernetes 为所有基础设施提供商提供一个中立的接入点。 迄今为止，我们最大的任务是将 in-tree 云控制器提取并迁移到 out-of-tree 组件。 SIG 会定期召开会议，讨论进展情况和即将到来的任务，并解决出现的问题和错误。 此外，我们还充当云提供商子项目（例如cloud provider 框架、特定的云控制器实现和 [Konnectivity proxy](https://kubernetes.io/docs/tasks/extend-kubernetes/setup-konnectivity/)）的协调点。
+Michael：SIG Cloud Provider 的成立是确保 Kubernetes 为所有基础设施提供商提供一个中立的接入点。 迄今为止，我们最大的任务是将 in-tree 云控制器提取并迁移到 out-of-tree 组件。 SIG 会定期召开会议，讨论进展情况和即将到来的任务，并解决出现的问题和错误。 此外，我们还充当云提供商子项目（例如 cloud provider 框架、特定的云控制器实现和 [Konnectivity proxy](https://kubernetes.io/docs/tasks/extend-kubernetes/setup-konnectivity/)）的协调点。
 
 Arujjwal：在阅读了项目的 [README](https://github.com/kubernetes/community/blob/master/sig-cloud-provider/README.md)之后，我了解到 SIG Cloud Provider 致力于 Kubernetes 与 cloud provider
 的集成。那么整个过程是怎样进行的呢？
