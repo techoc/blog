@@ -452,4 +452,5 @@ Special thanks to all the contributors who provided great reviews, shared valuab
 - Gaurav Singh
 
 > 原文地址: https://kubernetes.io/blog/2024/01/23/kubernetes-separate-image-filesystem/
+> 
 > 官方译文: https://kubernetes.io/zh-cn/blog/2024/01/23/kubernetes-separate-image-filesystem/

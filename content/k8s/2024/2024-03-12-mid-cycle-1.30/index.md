@@ -214,4 +214,5 @@ CEL 的添加到 Kubernetes 准入控制赋予了集群管理员制定复杂规�
 我们希望你和我们一样对这个版本的发布感到兴奋。请密切关注几周后发布的官方发布博客，了解更多亮点！
 
 > 原文地址: https://kubernetes.io/blog/2024/03/12/kubernetes-1-30-upcoming-changes/
-> 官方译文: https://kubernetes.io/zh-cn/blog/2024/03/12/kubernetes-1-30-upcoming-changes/
+> 
+>官方译文: https://kubernetes.io/zh-cn/blog/2024/03/12/kubernetes-1-30-upcoming-changes/
