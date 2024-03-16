@@ -5,7 +5,7 @@ layout: "tags"
 slug: "tags"
 menu:
     main:
-        weight: 3
+        weight: 4
         params: 
             icon: tag
 ---

@@ -1,19 +1,20 @@
 ---
 title: Links
 links:
-  - title: GitHub
-    description: GitHub is the world's largest software development platform.
-    website: https://github.com
-    image: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
+  - title: Kubernetes
+    description: Kubernetes 也称为 K8s，是用于自动部署、扩缩和管理容器化应用程序的开源系统。
+    website: https://kubernetes.io
+    image: Kubernetes-logo.png
 menu:
-    main: 
-        weight: 4
-        params:
-            icon: link
+  main:
+    weight: 5
+    params:
+      icon: link
 
-comments: false
+comments: true
 ---
 
+<!--
 To use this feature, add `links` section to frontmatter.
 
 This page's frontmatter:
@@ -31,3 +32,4 @@ links:
 ```
 
 `image` field accepts both local and external images.
+-->
