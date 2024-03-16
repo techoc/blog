@@ -622,3 +622,6 @@ or create an issue in the [GitHub repository](https://github.com/cri-o/cri-o).
 CRI-O 内部管理的 OCI 资源就像普通的文件一样。这提供了将它们移动、删除或在 seccomp 配置文件之外提供其他数据的好处。这使得在 OCI 工件之上对 CRI-O 进行未来增强成为可能，同时也考虑将 seccomp 配置文件堆叠作为 OCI 工件中的多个层的一部分。对于 v1.30.x 版本,仅适用于 Unconfined 工作负载的这个限制,是 CRI-O 希望未来解决的问题。通过不牺牲安全性来简化整体用户体验似乎是容器工作负载中 seccomp 的成功未来的关键。
 
 CRI-O 的维护者将乐于听取有关这个新功能的任何反馈或建议！感谢您阅读这篇博客文章，欢迎通过 Kubernetes 的 [Slack 频道#crio](https://kubernetes.slack.com/messages/CAZH62UR1) 或在 [GitHub 存储库](https://github.com/cri-o/cri-o)中创建问题与维护者联系。
+
+
+> 原文地址: https://kubernetes.io/blog/2024/03/07/cri-o-seccomp-oci-artifacts/
