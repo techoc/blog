@@ -102,7 +102,7 @@ spec:
 $ kube get pod -o wide|grep nginx
 nginx-deployment-ff549cb9d-5t4bp        1/1     Running   0          5m8s    10.244.0.40   k8s-master01   <none>           <none>
 
-$ sudo iptables -L -nv -t nat| grep "0.244.0.40:80"
+$ sudo iptables -L -nv -t nat| grep "10.244.0.40:80"
     0     0 DNAT       tcp  --  *      *       0.0.0.0/0            0.0.0.0/0            tcp dpt:81 to:10.244.0.40:80
 ```
 
@@ -149,6 +149,56 @@ tcp        0      0 0.0.0.0:80              0.0.0.0:*               LISTEN      
 ```
 
 如上配置，可以直接通过 `curl {node_ip}/index.html` 访问 nginx ，并且由于 Pod 采用的是宿主机的网络命名空间，因此宿主机可以直接看到 nginx master 进程正在监听 80 端口。
+
+## 同时使用 HostPort 和 HostNetwork
+
+如果在 deployment 中同时配置了 `hostPort` 和 `hostNetwork` ，那么 `hostPort` 会失效，只生效`hostNetwork`。
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-deployment
+  labels:
+    app: server
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: server
+  template:
+    metadata:
+      labels:
+        app: server
+    spec:
+      hostNetwork: true
+      containers:
+        - name: server
+          image: techoc/server:alpine
+          ports:
+            - containerPort: 9697
+              hostPort: 9697
+          env:
+            - name: PORT
+              value: "9697"
+```
+
+```shell
+$ k get po -owide
+NAME                                 READY   STATUS    RESTARTS   AGE   IP                NODE          NOMINATED NODE   READINESS GATES
+server-deployment-648dc69468-srwzh   1/1     Running   0          48s   192.168.157.129   k8s-master    <none>           <none>
+server-deployment-648dc69468-bxtjz   1/1     Running   0          48s   192.168.157.133   k8s-worker2   <none>           <none>
+server-deployment-648dc69468-p6bm2   1/1     Running   0          48s   192.168.157.132   k8s-worker1   <none>           <none>
+
+$ sudo netstat -lpn| grep ":9697"
+tcp6       0      0 :::9697                 :::*                    LISTEN      17101/./server
+
+$ sudo iptables -L -nv -t nat| grep ":9697"
+
+
+```
+
+可以看到，`yaml`中填写了`hostPort`，和`hostNetwork` 。但是查看端口，发现端口被占用，并且端口被占用的进程是`./server`,查看 `iptables` 则并没有添加任何规则，
 
 ## HostPort 和 HostNetwork 的异同
 
