@@ -9,9 +9,11 @@ categories: ["Kubernetes"]
 slug: "how-to-increase-the-number-of-pods-limit-per-kubernetes-node"
 ---
 
-[Kubernetes](https://kubernetes.io/) 是一个开源的容器编排系统，用于自动化容器化应用的部署、扩展和运行。Kubernetes 集群中的每个节点都有一个 pod 数量限制，默认为 110。
+[Kubernetes](https://kubernetes.io/) 是一个开源的容器编排系统，用于自动化容器化应用的部署、扩展和运行。Kubernetes
+集群中的每个节点都有一个 pod 数量限制，默认为 110。
 
-你可以通过修改 kubelet 的配置文件中的 `maxPods` 参数来修改 pod 数量限制。具体的[配置文件](https://kubernetes.io/zh-cn/docs/reference/config-api/kubelet-config.v1beta1/)可以查看。
+你可以通过修改 kubelet 的配置文件中的 `maxPods` 参数来修改 pod
+数量限制。具体的[配置文件](https://kubernetes.io/zh-cn/docs/reference/config-api/kubelet-config.v1beta1/)可以查看。
 
 1. 找到 kubelet 的配置文件路径。可以执行 `systemctl status kubelet` 命令查看：
 
