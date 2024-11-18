@@ -1,10 +1,10 @@
 ---
 title: Links
 links:
-  - title: Kubernetes
-    description: Kubernetes 也称为 K8s，是用于自动部署、扩缩和管理容器化应用程序的开源系统。
-    website: https://kubernetes.io
-    image: Kubernetes-logo.png
+  - title: 云梦泽
+    description: 我自风情万种，与世无争
+    website: https://hgt12.github.io/
+    image: https://hgt12.github.io/img/mi_manchi.png
 menu:
   main:
     weight: 5
