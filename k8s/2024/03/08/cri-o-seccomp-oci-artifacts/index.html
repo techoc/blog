@@ -1,0 +1,383 @@
+<!doctype html><html lang=zh-cn dir=ltr><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><meta name=description content="CRI-O: Applying seccomp profiles from OCI registries"><title>CRI-O：应用来自 OCI 注册中心的 seccomp 配置文件</title>
+<link rel=canonical href=https://www.acgh.top/k8s/2024/03/08/cri-o-seccomp-oci-artifacts/><link rel=stylesheet href=/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css><meta property='og:title' content="CRI-O：应用来自 OCI 注册中心的 seccomp 配置文件"><meta property='og:description' content="CRI-O: Applying seccomp profiles from OCI registries"><meta property='og:url' content='https://www.acgh.top/k8s/2024/03/08/cri-o-seccomp-oci-artifacts/'><meta property='og:site_name' content='Techoc`s'><meta property='og:type' content='article'><meta property='article:section' content='K8s'><meta property='article:tag' content='Kubernetes'><meta property='article:tag' content='Kubernetes blog'><meta property='article:tag' content='翻译'><meta property='article:published_time' content='2024-03-08T00:23:10+08:00'><meta property='article:modified_time' content='2024-03-08T00:23:10+08:00'><meta property='og:image' content='https://s.cn.bing.net/th?id=OHR.IguazuFalls_ZH-CN4749837052_1920x1080.webp&amp;qlt=50'><meta name=twitter:title content="CRI-O：应用来自 OCI 注册中心的 seccomp 配置文件"><meta name=twitter:description content="CRI-O: Applying seccomp profiles from OCI registries"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content='https://s.cn.bing.net/th?id=OHR.IguazuFalls_ZH-CN4749837052_1920x1080.webp&amp;qlt=50'><link rel="shortcut icon" href=/favicon.png><style>:root{--article-font-family:"Merriweather", var(--base-font-family)}</style><script>(function(){const e=document.createElement("link");e.href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap",e.type="text/css",e.rel="stylesheet",document.head.appendChild(e)})()</script></head><body class=article-page><script>(function(){const e="StackColorScheme";localStorage.getItem(e)||localStorage.setItem(e,"auto")})()</script><script>(function(){const t="StackColorScheme",e=localStorage.getItem(t),n=window.matchMedia("(prefers-color-scheme: dark)").matches===!0;e=="dark"||e==="auto"&&n?document.documentElement.dataset.scheme="dark":document.documentElement.dataset.scheme="light"})()</script><div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky"><button class="hamburger hamburger--spin" type=button id=toggle-menu aria-label=切换菜单>
+<span class=hamburger-box><span class=hamburger-inner></span></span></button><header><figure class=site-avatar><a href=/><img src=/48900433.jpg width=300 height=300 class=site-logo loading=lazy alt=Avatar>
+</a><span class=emoji>💤</span></figure><div class=site-meta><h1 class=site-name><a href=/>Techoc`s</a></h1><h2 class=site-description>不困、不惑、不忧、不惧。</h2></div></header><ol class=menu-social><li><a href=https://github.com/techoc target=_blank title=GitHub rel=me><svg class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6.0 00-1.3-3.2 4.2 4.2.0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3.0 00-6.2.0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2.0 00-.1 3.2A4.6 4.6.0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg></a></li></ol><ol class=menu id=main-menu><li><a href=/><svg class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><polyline points="5 12 3 12 12 3 21 12 19 12"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/><path d="M9 21v-6a2 2 0 012-2h2a2 2 0 012 2v6"/></svg>
+<span>Home</span></a></li><li><a href=/search/><svg class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/></svg>
+<span>Search</span></a></li><li><a href=/archives/><svg class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><rect x="3" y="4" width="18" height="4" rx="2"/><path d="M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+<span>Archives</span></a></li><li><a href=/tags/><svg class="icon icon-tabler icon-tabler-tag" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M11 3l9 9a1.5 1.5.0 010 2l-6 6a1.5 1.5.0 01-2 0L3 11V7a4 4 0 014-4h4"/><circle cx="9" cy="9" r="2"/></svg>
+<span>Tags</span></a></li><li><a href=/links/><svg class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M10 14a3.5 3.5.0 005 0l4-4a3.5 3.5.0 00-5-5l-.5.5"/><path d="M14 10a3.5 3.5.0 00-5 0l-4 4a3.5 3.5.0 005 5l.5-.5"/></svg>
+<span>Links</span></a></li><li class=menu-bottom-section><ol class=menu><li id=dark-mode-toggle><svg class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="8" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<svg class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="16" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<span>暗色模式</span></li></ol></li></ol></aside><aside class="sidebar right-sidebar sticky"><section class="widget archives"><div class=widget-icon><svg class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="19" y2="15"/><line x1="11" y1="4" x2="7" y2="20"/><line x1="17" y1="4" x2="13" y2="20"/></svg></div><h2 class="widget-title section-title">目录</h2><div class=widget--toc><nav id=TableOfContents><ol><li><a href=#cri-o-来解忧>CRI-O 来解忧</a><ol><li><a href=#使用注释来指定特定容器或整个-pod>使用注释来指定特定容器或整个 pod</a></li><li><a href=#对容器镜像使用注释>对容器镜像使用注释</a></li><li><a href=#使用-oras-推送配置文件>使用 ORAS 推送配置文件</a></li></ol></li><li><a href=#将来的工作>将来的工作</a></li></ol></nav></div></section></aside><main class="main full-width"><article class="has-image main-article"><header class=article-header><div class=article-image><a href=/k8s/2024/03/08/cri-o-seccomp-oci-artifacts/><img src="https://s.cn.bing.net/th?id=OHR.IguazuFalls_ZH-CN4749837052_1920x1080.webp&amp;qlt=50" loading=lazy alt="Featured image of post CRI-O：应用来自 OCI 注册中心的 seccomp 配置文件"></a></div><div class=article-details><header class=article-category><a href=/categories/kubernetes/ style=background-color:#2a9d8f;color:#fff>Kubernetes</a></header><div class=article-title-wrapper><h2 class=article-title><a href=/k8s/2024/03/08/cri-o-seccomp-oci-artifacts/>CRI-O：应用来自 OCI 注册中心的 seccomp 配置文件</a></h2><h3 class=article-subtitle>CRI-O: Applying seccomp profiles from OCI registries</h3></div><footer class=article-time><div><svg class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M11.795 21H5a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v4"/><circle cx="18" cy="18" r="4"/><path d="M15 3v4"/><path d="M7 3v4"/><path d="M3 11h16"/><path d="M18 16.496V18l1 1"/></svg>
+<time class=article-time--published>2024-03-08 00:23:10</time></div><div><svg class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<time class=article-time--reading>阅读时长: 7 分钟</time></div></footer></div></header><section class=article-content><p><strong>作者:</strong> Sascha Grunert</p><p><strong>译者:</strong> <a class=link href=https://github.com/techoc target=_blank rel=noopener>Rui Yang</a></p><p>Seccomp 代表安全计算模式，自 Linux 内核 2.6.12 版本起成为其特性。它可以用于沙箱化进程的特权，限制其从用户空间向内核发出的调用。Kubernetes 允许你自动应用加载到节点上的 seccomp 配置文件到你的 Pods 和容器。</p><p>但是在 Kubernetes 中分发这些 seccomp 配置文件是一个重大的挑战，因为 JSON 文件必须在所有可能运行工作负载的节点上可用。像 <a class=link href=https://sigs.k8s.io/security-profiles-operator target=_blank rel=noopener>Security Profiles</a> 这样的项目通过在集群内运行守护进程来解决这个问题，这让我想知道哪些部分可以由 <a class=link href=/docs/setup/production-environment/container-runtimes>容器运行时</a> 来完成。</p><p>运行时通常从本地路径应用配置文件，例如：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>Pod</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>pod</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>containers</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>container</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class=l>nginx:1.25.3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>securityContext</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>seccompProfile</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>type</span><span class=p>:</span><span class=w> </span><span class=l>Localhost</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>localhostProfile</span><span class=p>:</span><span class=w> </span><span class=l>nginx-1.25.3.json</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>配置文件 <code>nginx-1.25.3.json</code> 必须位于 kubelet 的根目录中，并追加 <code>seccomp</code> 目录。这意味着配置文件在磁盘上的默认位置将是 <code>/var/lib/kubelet/seccomp/nginx-1.25.3.json</code>。如果配置文件不可用，那么容器创建时容器运行时会失败，如下所示：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>kubectl get pods
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-console data-lang=console><span class=line><span class=cl><span class=go>NAME   READY   STATUS                 RESTARTS   AGE
+</span></span></span><span class=line><span class=cl><span class=go>pod    0/1     CreateContainerError   0          38s
+</span></span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>kubectl describe pod/pod <span class=p>|</span> tail
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-console data-lang=console><span class=line><span class=cl><span class=go>Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+</span></span></span><span class=line><span class=cl><span class=go>                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+</span></span></span><span class=line><span class=cl><span class=go>Events:
+</span></span></span><span class=line><span class=cl><span class=go>  Type     Reason     Age                 From               Message
+</span></span></span><span class=line><span class=cl><span class=go>  ----     ------     ----                ----               -------
+</span></span></span><span class=line><span class=cl><span class=go>  Normal   Scheduled  117s                default-scheduler  Successfully assigned default/pod to 127.0.0.1
+</span></span></span><span class=line><span class=cl><span class=go>  Normal   Pulling    117s                kubelet            Pulling image &#34;nginx:1.25.3&#34;
+</span></span></span><span class=line><span class=cl><span class=go>  Normal   Pulled     111s                kubelet            Successfully pulled image &#34;nginx:1.25.3&#34; in 5.948s (5.948s including waiting)
+</span></span></span><span class=line><span class=cl><span class=go>  Warning  Failed     7s (x10 over 111s)  kubelet            Error: setup seccomp: unable to load local profile &#34;/var/lib/kubelet/seccomp/nginx-1.25.3.json&#34;: open /var/lib/kubelet/seccomp/nginx-1.25.3.json: no such file or directory
+</span></span></span><span class=line><span class=cl><span class=go>  Normal   Pulled     7s (x9 over 111s)   kubelet            Container image &#34;nginx:1.25.3&#34; already present on machine
+</span></span></span></code></pre></td></tr></table></div></div><p>需要手动分发<code>Localhost</code>配置文件这个主要障碍将导致许多终端用户退回到<code>RuntimeDefault</code>，甚至运行其工作负载为<code>Unconfined</code>(禁用 seccomp)。</p><h2 id=cri-o-来解忧>CRI-O 来解忧</h2><p>Kubernetes 容器运行时 <a class=link href=https://github.com/cri-o/cri-o target=_blank rel=noopener>CRI-O</a> 通过自定义注释提供各种功能。v1.30 版本添加了对一组新注释的<a class=link href=https://github.com/cri-o/cri-o/pull/7719 target=_blank rel=noopener>支持</a>，称为 <code>seccomp-profile.kubernetes.cri-o.io/POD</code> 和 <code>seccomp-profile.kubernetes.cri-o.io/&lt;CONTAINER></code>。这些注释允许你指定：</p><ul><li>一个特定容器的 seccomp 配置文件，当作为 <code>seccomp-profile.kubernetes.cri-o.io/&lt;CONTAINER></code> 使用时（例如：<code>seccomp-profile.kubernetes.cri-o.io/webserver: 'registry.example/example/webserver:v1'</code>）</li><li>一个 pod 中所有容器的 seccomp 配置文件，当不使用容器名称后缀但使用保留名称 <code>POD</code> 时（例如：<code>seccomp-profile.kubernetes.cri-o.io/POD</code>）</li><li>整个容器镜像的 seccomp 配置文件，如果镜像本身包含注释 <code>seccomp-profile.kubernetes.cri-o.io/POD</code> 或 <code>seccomp-profile.kubernetes.cri-o.io/&lt;CONTAINER></code>。</li></ul><p>CRI-O 只有在运行时配置为允许的情况下才会遵守该注释，以及以 <code>Unconfined</code> 方式运行工作负载。所有其他的工作负载仍将
+使用具有更高优先级的<code>securityContext</code>中的值</p><p>仅仅使用注释并不能很好地解决配置文件的分发问题，但是它们可以被引用！例如，现在你可以像使用 OCI artifacts 一样指定 seccomp 配置文件：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>Pod</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>pod</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>annotations</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>seccomp-profile.kubernetes.cri-o.io/POD</span><span class=p>:</span><span class=w> </span><span class=l>quay.io/crio/seccomp:v2</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w> </span><span class=l>…</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>镜像 <code>quay.io/crio/seccomp:v2</code> 包含一个<code>seccomp.json</code>,该文件包含实际的配置文件内容。可以使用像 <a class=link href=https://oras.land target=_blank rel=noopener>ORAS</a> 或 <a class=link href=https://github.com/containers/skopeo target=_blank rel=noopener>Skopeo</a> 这样的工具来检查镜像的内容：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>oras pull quay.io/crio/seccomp:v2
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-console data-lang=console><span class=line><span class=cl><span class=go>Downloading 92d8ebfa89aa seccomp.json
+</span></span></span><span class=line><span class=cl><span class=go>Downloaded  92d8ebfa89aa seccomp.json
+</span></span></span><span class=line><span class=cl><span class=go>Pulled [registry] quay.io/crio/seccomp:v2
+</span></span></span><span class=line><span class=cl><span class=go>Digest: sha256:f0205dac8a24394d9ddf4e48c7ac201ca7dcfea4c554f7ca27777a7f8c43ec1b
+</span></span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>jq . seccomp.json <span class=p>|</span> head
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl>{<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>&#34;defaultAction&#34;: </span><span class=s2>&#34;SCMP_ACT_ERRNO&#34;</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>&#34;defaultErrnoRet&#34;: </span><span class=m>38</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>&#34;defaultErrno&#34;: </span><span class=s2>&#34;ENOSYS&#34;</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>&#34;archMap&#34;: </span><span class=p>[</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>{<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>&#34;architecture&#34;: </span><span class=s2>&#34;SCMP_ARCH_X86_64&#34;</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>&#34;subArchitectures&#34;: </span><span class=p>[</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=s2>&#34;SCMP_ARCH_X86&#34;</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=s2>&#34;SCMP_ARCH_X32&#34;</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl><span class=c1># Inspect the plain manifest of the image</span>
+</span></span><span class=line><span class=cl>skopeo inspect --raw docker://quay.io/crio/seccomp:v2 <span class=p>|</span> jq .
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl>{<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>&#34;schemaVersion&#34;: </span><span class=m>2</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>&#34;mediaType&#34;: </span><span class=s2>&#34;application/vnd.oci.image.manifest.v1+json&#34;</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=s2>&#34;config&#34;</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>{<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>&#34;mediaType&#34;: </span><span class=s2>&#34;application/vnd.cncf.seccomp-profile.config.v1+json&#34;</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>&#34;digest&#34;: </span><span class=s2>&#34;sha256:ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356&#34;</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>&#34;size&#34;: </span><span class=m>3</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>}<span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=s2>&#34;layers&#34;</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=p>[</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>{<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>&#34;mediaType&#34;: </span><span class=s2>&#34;application/vnd.oci.image.layer.v1.tar&#34;</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>&#34;digest&#34;: </span><span class=s2>&#34;sha256:92d8ebfa89aa6dd752c6443c27e412df1b568d62b4af129494d7364802b2d476&#34;</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>&#34;size&#34;: </span><span class=m>18853</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>&#34;annotations&#34;: { &#34;org.opencontainers.image.title&#34;: </span><span class=s2>&#34;seccomp.json&#34;</span><span class=w> </span>}<span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>}<span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=p>],</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>&#34;annotations&#34;: { &#34;org.opencontainers.image.created&#34;: </span><span class=s2>&#34;2024-02-26T09:03:30Z&#34;</span><span class=w> </span>}<span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span>}<span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>镜像清单包含对特定所需配置媒体类型的引用（<code>application/vnd. cncf.seccomp-profile.config.v1+json</code>）和指向<code>seccomp.json</code>文件的单个层（<code>application/vnd. oi.image.layer.v1.tar</code>）。但是现在，让我们试一试这个新特征！</p><h3 id=使用注释来指定特定容器或整个-pod>使用注释来指定特定容器或整个 pod</h3><p>CRI-O 需要适当地配置才能使用该注释。可以通过将注释添加到运行时的 <code>allowed_annotations</code> 数组来实现。可以使用一个 drop-in 配置文件 <code>/etc/crio/crio.conf.d/10-crun.conf</code> 来实现：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-toml data-lang=toml><span class=line><span class=cl><span class=p>[</span><span class=nx>crio</span><span class=p>.</span><span class=nx>runtime</span><span class=p>]</span>
+</span></span><span class=line><span class=cl><span class=nx>default_runtime</span> <span class=p>=</span> <span class=s2>&#34;crun&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=p>[</span><span class=nx>crio</span><span class=p>.</span><span class=nx>runtime</span><span class=p>.</span><span class=nx>runtimes</span><span class=p>.</span><span class=nx>crun</span><span class=p>]</span>
+</span></span><span class=line><span class=cl><span class=nx>allowed_annotations</span> <span class=p>=</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;seccomp-profile.kubernetes.cri-o.io&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl><span class=p>]</span>
+</span></span></code></pre></td></tr></table></div></div><p>现在，让我们从最新的<code>main</code>提交中运行 CRI-O。可以通过从源代码构建，使用<a class=link href="https://github.com/cri-o/packaging?tab=readme-ov-file#using-the-static-binary-bundles-directly" target=_blank rel=noopener>静态二进制包</a>
+或<a class=link href="https://github.com/cri-o/packaging?tab=readme-ov-file#usage" target=_blank rel=noopener>预发布软件包</a>来实现这一点。</p><p>为了演示，我在我的命令行中运行了<code>crio</code>二进制文件，使用<a class=link href="https://github.com/cri-o/cri-o?tab=readme-ov-file#running-kubernetes-with-cri-o" target=_blank rel=noopener><code>local-up-cluster.sh</code></a>来启动单节点 Kubernetes 集群。现在集群已经启动并运行，让我们尝试一个没有注释的 Pod，以<code>Unconfined</code>模式运行 seccomp：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>cat pod.yaml
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>Pod</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>pod</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>containers</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>container</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class=l>nginx:1.25.3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>securityContext</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>seccompProfile</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>type</span><span class=p>:</span><span class=w> </span><span class=l>Unconfined</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>kubectl apply -f pod.yaml
+</span></span></code></pre></td></tr></table></div></div><p>工作负载已启动并运行：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>kubectl get pods
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-console data-lang=console><span class=line><span class=cl><span class=go>NAME   READY   STATUS    RESTARTS   AGE
+</span></span></span><span class=line><span class=cl><span class=go>pod    1/1     Running   0          15s
+</span></span></span></code></pre></td></tr></table></div></div><p>并且如果我使用<a class=link href=https://sigs.k8s.io/cri-tools target=_blank rel=noopener><code>crictl</code></a>检查容器,则没有 seccomp 配置被应用：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl><span class=nb>export</span> <span class=nv>CONTAINER_ID</span><span class=o>=</span><span class=k>$(</span>sudo crictl ps --name container -q<span class=k>)</span>
+</span></span><span class=line><span class=cl>sudo crictl inspect <span class=nv>$CONTAINER_ID</span> <span class=p>|</span> jq .info.runtimeSpec.linux.seccomp
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-console data-lang=console><span class=line><span class=cl><span class=go>null
+</span></span></span></code></pre></td></tr></table></div></div><p>现在，让我们修改 pod，将配置文件<code>quay.io/crio/seccomp:v2</code>应用到容器：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>Pod</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>pod</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>annotations</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>seccomp-profile.kubernetes.cri-o.io/container</span><span class=p>:</span><span class=w> </span><span class=l>quay.io/crio/seccomp:v2</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>containers</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>container</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class=l>nginx:1.25.3</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>我必须删除并重新创建 Pod，因为只有重新创建才会应用新的 Seccomp 配置文件：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>kubectl delete pod/pod
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-console data-lang=console><span class=line><span class=cl><span class=go>pod &#34;pod&#34; deleted
+</span></span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>kubectl apply -f pod.yaml
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-console data-lang=console><span class=line><span class=cl><span class=go>pod/pod created
+</span></span></span></code></pre></td></tr></table></div></div><p>CRI-O 日志将表明运行时拉取了该工件：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-console data-lang=console><span class=line><span class=cl><span class=go>WARN[…] Allowed annotations are specified for workload [seccomp-profile.kubernetes.cri-o.io]
+</span></span></span><span class=line><span class=cl><span class=go>INFO[…] Found container specific seccomp profile annotation: seccomp-profile.kubernetes.cri-o.io/container=quay.io/crio/seccomp:v2  id=26ddcbe6-6efe-414a-88fd-b1ca91979e93 name=/runtime.v1.RuntimeService/CreateContainer
+</span></span></span><span class=line><span class=cl><span class=go>INFO[…] Pulling OCI artifact from ref: quay.io/crio/seccomp:v2  id=26ddcbe6-6efe-414a-88fd-b1ca91979e93 name=/runtime.v1.RuntimeService/CreateContainer
+</span></span></span><span class=line><span class=cl><span class=go>INFO[…] Retrieved OCI artifact seccomp profile of len: 18853  id=26ddcbe6-6efe-414a-88fd-b1ca91979e93 name=/runtime.v1.RuntimeService/CreateContainer
+</span></span></span></code></pre></td></tr></table></div></div><p>并且容器最终使用了这个配置：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl><span class=nb>export</span> <span class=nv>CONTAINER_ID</span><span class=o>=</span><span class=k>$(</span>sudo crictl ps --name container -q<span class=k>)</span>
+</span></span><span class=line><span class=cl>sudo crictl inspect <span class=nv>$CONTAINER_ID</span> <span class=p>|</span> jq .info.runtimeSpec.linux.seccomp <span class=p>|</span> head
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl>{<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>&#34;defaultAction&#34;: </span><span class=s2>&#34;SCMP_ACT_ERRNO&#34;</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>&#34;defaultErrnoRet&#34;: </span><span class=m>38</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>&#34;architectures&#34;: </span><span class=p>[</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=s2>&#34;SCMP_ARCH_X86_64&#34;</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=s2>&#34;SCMP_ARCH_X86&#34;</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=s2>&#34;SCMP_ARCH_X32&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=p>],</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>&#34;syscalls&#34;: </span><span class=p>[</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>{<span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>如果用户将<code>/container</code>后缀替换为保留名称<code>/POD</code>，则每个容器中的相同操作都会生效，例如：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>Pod</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>pod</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>annotations</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>seccomp-profile.kubernetes.cri-o.io/POD</span><span class=p>:</span><span class=w> </span><span class=l>quay.io/crio/seccomp:v2</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>containers</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>container</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class=l>nginx:1.25.3</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><h3 id=对容器镜像使用注释>对容器镜像使用注释</h3><p>在某些工作负载中将 seccomp 配置文件指定为 OCI 工件是一个很酷的功能，但大多数终端用户更愿意将 seccomp 配置文件与已发布的容器镜像关联起来。这可以通过使用容器镜像注释来实现；而不是应用于 Kubernetes Pod，该注释是应用于容器镜像本身的一些元数据。例如，<a class=link href=https://podman.io target=_blank rel=noopener>Podman</a> 可以在构建镜像时直接添加镜像注释：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>podman build <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>    --annotation seccomp-profile.kubernetes.cri-o.io<span class=o>=</span>quay.io/crio/seccomp:v2 <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>    -t quay.io/crio/nginx-seccomp:v2 .
+</span></span></code></pre></td></tr></table></div></div><p>推送的镜像包含了这个注释：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>skopeo inspect --raw docker://quay.io/crio/nginx-seccomp:v2 <span class=p>|</span>
+</span></span><span class=line><span class=cl>    jq <span class=s1>&#39;.annotations.&#34;seccomp-profile.kubernetes.cri-o.io&#34;&#39;</span>
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-console data-lang=console><span class=line><span class=cl><span class=go>&#34;quay.io/crio/seccomp:v2&#34;
+</span></span></span></code></pre></td></tr></table></div></div><p>如果现在在一个 CRI-O 测试 Pod 定义中使用该镜像：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>Pod</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>pod</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=c># no Pod annotations set</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>containers</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>container</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class=l>quay.io/crio/nginx-seccomp:v2</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>然后，CRI-O 日志将显示镜像注释已被评估，并且配置文件已被应用：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>kubectl delete pod/pod
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-console data-lang=console><span class=line><span class=cl><span class=go>pod &#34;pod&#34; deleted
+</span></span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>kubectl apply -f pod.yaml
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-console data-lang=console><span class=line><span class=cl><span class=go>pod/pod created
+</span></span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-console data-lang=console><span class=line><span class=cl><span class=go>INFO[…] Found image specific seccomp profile annotation: seccomp-profile.kubernetes.cri-o.io=quay.io/crio/seccomp:v2  id=c1f22c59-e30e-4046-931d-a0c0fdc2c8b7 name=/runtime.v1.RuntimeService/CreateContainer
+</span></span></span><span class=line><span class=cl><span class=go>INFO[…] Pulling OCI artifact from ref: quay.io/crio/seccomp:v2  id=c1f22c59-e30e-4046-931d-a0c0fdc2c8b7 name=/runtime.v1.RuntimeService/CreateContainer
+</span></span></span><span class=line><span class=cl><span class=go>INFO[…] Retrieved OCI artifact seccomp profile of len: 18853  id=c1f22c59-e30e-4046-931d-a0c0fdc2c8b7 name=/runtime.v1.RuntimeService/CreateContainer
+</span></span></span><span class=line><span class=cl><span class=go>INFO[…] Created container 116a316cd9a11fe861dd04c43b94f45046d1ff37e2ed05a4e4194fcaab29ee63: default/pod/container  id=c1f22c59-e30e-4046-931d-a0c0fdc2c8b7 name=/runtime.v1.RuntimeService/CreateContainer
+</span></span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl><span class=nb>export</span> <span class=nv>CONTAINER_ID</span><span class=o>=</span><span class=k>$(</span>sudo crictl ps --name container -q<span class=k>)</span>
+</span></span><span class=line><span class=cl>sudo crictl inspect <span class=nv>$CONTAINER_ID</span> <span class=p>|</span> jq .info.runtimeSpec.linux.seccomp <span class=p>|</span> head
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl>{<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>&#34;defaultAction&#34;: </span><span class=s2>&#34;SCMP_ACT_ERRNO&#34;</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>&#34;defaultErrnoRet&#34;: </span><span class=m>38</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>&#34;architectures&#34;: </span><span class=p>[</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=s2>&#34;SCMP_ARCH_X86_64&#34;</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=s2>&#34;SCMP_ARCH_X86&#34;</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=s2>&#34;SCMP_ARCH_X32&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=p>],</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>&#34;syscalls&#34;: </span><span class=p>[</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>{<span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>对于容器镜像，注释 <code>seccomp-profile.kubernetes.cri-o.io</code> 将被视为与 <code>seccomp-profile.kubernetes.cri-o.io/POD</code> 相同，并适用于整个 Pod。除此之外，当在镜像上使用容器特定的注释时，整个功能也会起作用，例如，如果一个容器的名称是 <code>container1</code>：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>skopeo inspect --raw docker://quay.io/crio/nginx-seccomp:v2-container <span class=p>|</span>
+</span></span><span class=line><span class=cl>    jq <span class=s1>&#39;.annotations.&#34;seccomp-profile.kubernetes.cri-o.io/container1&#34;&#39;</span>
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-console data-lang=console><span class=line><span class=cl><span class=go>&#34;quay.io/crio/seccomp:v2&#34;
+</span></span></span></code></pre></td></tr></table></div></div><p>这个整个功能的很酷之处在于，用户现在可以为特定的容器镜像创建 seccomp 配置文件，并将它们存储在同一个仓库中。将镜像与配置文件关联起来为在整个应用程序生命周期内维护它们提供了极大的灵活性。</p><h3 id=使用-oras-推送配置文件>使用 ORAS 推送配置文件</h3><p>当使用 ORAS 时，实际创建包含 seccomp 配置文件的 OCI 对象需要更多工作。我希望像 Podman 这样的工具将来会简化整个过程。当前，容器注册表需要是<a class=link href=https://oras.land/docs/compatible_oci_registries/#registries-supporting-oci-artifacts target=_blank rel=noopener>OCI 兼容的</a>，这也适用于<a class=link href=https://quay.io target=_blank rel=noopener>Quay.io</a>。CRI-O 期望 seccomp 配置文件对象具有容器镜像媒体类型(<code>application/vnd.cncf.seccomp-profile.config.v1+json</code>)，而 ORAS 默认使用<code>application/vnd.oci.empty.v1+json</code>。为了实现所有这些，可以执行以下命令：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl><span class=nb>echo</span> <span class=s2>&#34;{}&#34;</span> &gt; config.json
+</span></span><span class=line><span class=cl>oras push <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>    --config config.json:application/vnd.cncf.seccomp-profile.config.v1+json <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>     quay.io/crio/seccomp:v2 seccomp.json
+</span></span></code></pre></td></tr></table></div></div><p>生成的镜像包含了 CRI-O 所期望的<code>mediaType</code>。ORAS 将单个层<code>seccomp.json</code>推送到注册表中。配置文件的名称并不太重要。CRI-O 将选择第一个层，并检查其是否可以作为 seccomp 配置文件。</p><h2 id=将来的工作>将来的工作</h2><p>CRI-O 内部管理的 OCI 资源就像普通的文件一样。这提供了将它们移动、删除或在 seccomp 配置文件之外提供其他数据的好处。这使得在 OCI 工件之上对 CRI-O 进行未来增强成为可能，同时也考虑将 seccomp 配置文件堆叠作为 OCI 工件中的多个层的一部分。对于 v1.30.x 版本,仅适用于 Unconfined 工作负载的这个限制,是 CRI-O 希望未来解决的问题。通过不牺牲安全性来简化整体用户体验似乎是容器工作负载中 seccomp 的成功未来的关键。</p><p>CRI-O 的维护者将乐于听取有关这个新功能的任何反馈或建议！感谢您阅读这篇博客文章，欢迎通过 Kubernetes 的 <a class=link href=https://kubernetes.slack.com/messages/CAZH62UR1 target=_blank rel=noopener>Slack 频道#crio</a> 或在 <a class=link href=https://github.com/cri-o/cri-o target=_blank rel=noopener>GitHub 存储库</a>中创建问题与维护者联系。</p><blockquote><p>原文地址: <a class=link href=https://kubernetes.io/blog/2024/03/07/cri-o-seccomp-oci-artifacts/ target=_blank rel=noopener>https://kubernetes.io/blog/2024/03/07/cri-o-seccomp-oci-artifacts/</a></p></blockquote></section><footer class=article-footer><section class=article-tags><a href=/tags/kubernetes/>Kubernetes</a>
+<a href=/tags/kubernetes-blog/>Kubernetes Blog</a>
+<a href=/tags/%E7%BF%BB%E8%AF%91/>翻译</a></section><section class=article-copyright><svg class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><path d="M14.5 9a3.5 4 0 100 6"/></svg>
+<span>Licensed under CC BY-NC-SA 4.0</span></section></footer></article><aside class=related-content--wrapper><h2 class=section-title>相关文章</h2><div class=related-content><div class="flex article-list--tile"><article class=has-image><a href=/k8s/2024/03/16/kubernetes-1-30-upcoming-changes/><div class=article-image><img src="https://www.bing.com/th?id=OHR.BambooPanda_ZH-CN8455481760_1920x1080.jpg&amp;rf=LaDigue_1920x1080.jpg&amp;pid=hp" loading=lazy data-key=kubernetes-1-30-upcoming-changes data-hash="https://www.bing.com/th?id=OHR.BambooPanda_ZH-CN8455481760_1920x1080.jpg&amp;rf=LaDigue_1920x1080.jpg&amp;pid=hp"></div><div class=article-details><h2 class=article-title>Kubernetes v1.30 初探</h2></div></a></article><article class=has-image><a href=/k8s/2024/03/06/kubernetes-separate-image-filesystem/><div class=article-image><img src=https://img.picgo.net/2024/03/05/_20240305223322f97c305c6e79f24e.jpeg loading=lazy data-key=kubernetes-separate-image-filesystem data-hash=https://img.picgo.net/2024/03/05/_20240305223322f97c305c6e79f24e.jpeg></div><div class=article-details><h2 class=article-title>镜像文件系统：配置 Kubernetes 将容器存储在单独的文件系统上</h2></div></a></article><article class=has-image><a href=/k8s/2024/03/02/sig-cloud-provider-spotlight-2024/><div class=article-image><img src="https://www4.bing.com//th?id=OHR.LeapingSquirrel_ZH-CN9112090462_1920x1080.jpg" loading=lazy data-key=sig-cloud-provider-spotlight-2024 data-hash="https://www4.bing.com//th?id=OHR.LeapingSquirrel_ZH-CN9112090462_1920x1080.jpg"></div><div class=article-details><h2 class=article-title>聚焦 SIG 云提供商</h2></div></a></article><article class=has-image><a href=/k8s/2024/03/20/nodeport-hostport-hostnetwork/><div class=article-image><img src="https://s.cn.bing.net/th?id=OHR.WhiteEyes_ZH-CN1130380430_1920x1080.jpg&amp;rf=LaDigue_1920x1080.jpg&amp;pid=hp" loading=lazy data-key=nodeport-hostport-hostnetwork data-hash="https://s.cn.bing.net/th?id=OHR.WhiteEyes_ZH-CN1130380430_1920x1080.jpg&amp;rf=LaDigue_1920x1080.jpg&amp;pid=hp"></div><div class=article-details><h2 class=article-title>NodePort和HostPort与HostNetwork之间的区别</h2></div></a></article><article class=has-image><a href=/k8s/2024/03/13/how-to-increase-the-number-of-pods-limit-per-kubernetes-node/><div class=article-image><img src=/k8s/2024/03/13/how-to-increase-the-number-of-pods-limit-per-kubernetes-node/2024-07-15-22-51-03.45d633a75744c150e99879a7347150f2_hu_be73c63ad95af047.png width=250 height=150 loading=lazy alt="Featured image of post 如何修改每个 Kubernetes 节点的最大 pod 数量限制" data-key=how-to-increase-the-number-of-pods-limit-per-kubernetes-node data-hash="md5-RdYzp1dEwVDpmHmnNHFQ8g=="></div><div class=article-details><h2 class=article-title>如何修改每个 Kubernetes 节点的最大 pod 数量限制</h2></div></a></article></div></div></aside><script src=https://giscus.app/client.js data-repo=techoc/blog data-repo-id=R_kgDOLbcnXg data-category=Announcements data-category-id=DIC_kwDOLbcnXs4Cdtg0 data-mapping=pathname data-strict=0 data-reactions-enabled=1 data-emit-metadata=0 data-input-position=top data-theme=light data-lang=zh-CN data-loading crossorigin=anonymous async></script><script>function setGiscusTheme(e){let t=document.querySelector("iframe.giscus-frame");t&&t.contentWindow.postMessage({giscus:{setConfig:{theme:e}}},"https://giscus.app")}(function(){addEventListener("message",t=>{if(event.origin!=="https://giscus.app")return;e()}),window.addEventListener("onColorSchemeChange",e);function e(){setGiscusTheme(document.documentElement.dataset.scheme==="light"?"light":"dark_dimmed")}})()</script><footer class=site-footer><section class=copyright>&copy;
+2018 -
+2025 Techoc`s</section><section class=powerby>使用 <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a> 构建<br>主题 <b><a href=https://github.com/CaiJimmy/hugo-theme-stack target=_blank rel=noopener data-version=3.30.0>Stack</a></b> 由 <a href=https://jimmycai.com target=_blank rel=noopener>Jimmy</a> 设计</section></footer><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<button class="pswp__button pswp__button--share" title=Share></button>
+<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+</button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo=" crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU=" crossorigin=anonymous defer></script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css crossorigin=anonymous><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css crossorigin=anonymous></main></div><script src=https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z+KMkF24hUW8WePSA9HM=" crossorigin=anonymous></script><script type=text/javascript src=/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js defer></script><script>(function(){const e=document.createElement("link");e.href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap",e.type="text/css",e.rel="stylesheet",document.head.appendChild(e)})()</script></body></html>

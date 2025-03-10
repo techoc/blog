@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>MySQL on Techoc`s</title><link>https://www.acgh.top/categories/mysql/</link><description>Recent content in MySQL on Techoc`s</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Mon, 25 Mar 2024 16:21:45 +0800</lastBuildDate><atom:link href="https://www.acgh.top/categories/mysql/index.xml" rel="self" type="application/rss+xml"/><item><title>InnoDB的行格式</title><link>https://www.acgh.top/mysql/innodb-row-format/</link><pubDate>Mon, 25 Mar 2024 16:21:45 +0800</pubDate><guid>https://www.acgh.top/mysql/innodb-row-format/</guid><description>&lt;p>InnoDB引擎支持四种行格式：&lt;/p>
+&lt;ul>
+&lt;li>REDUNDANT&lt;/li>
+&lt;li>COMPACT&lt;/li>
+&lt;li>DYNAMIC&lt;/li>
+&lt;li>COMPRESSED&lt;/li>
+&lt;/ul>
+&lt;p>他们的区别如下：&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Row Format&lt;/th>
+&lt;th>Compact Storage Characteristics&lt;/th>
+&lt;th>Enhanced Variable-Length Column Storage&lt;/th>
+&lt;th>Large Index Key Prefix Support&lt;/th>
+&lt;th>Compression Support&lt;/th>
+&lt;th>Supported Tablespace Types&lt;/th>
+&lt;th>Required File Format&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>REDUNDANT&lt;/td>
+&lt;td>No&lt;/td>
+&lt;td>No&lt;/td>
+&lt;td>No&lt;/td>
+&lt;td>No&lt;/td>
+&lt;td>system, file-per-table, general&lt;/td>
+&lt;td>Antelope or Barracuda&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>COMPACT&lt;/td>
+&lt;td>Yes&lt;/td>
+&lt;td>No&lt;/td>
+&lt;td>No&lt;/td>
+&lt;td>No&lt;/td>
+&lt;td>system, file-per-table, general&lt;/td>
+&lt;td>Antelope or Barracuda&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>DYNAMIC&lt;/td>
+&lt;td>Yes&lt;/td>
+&lt;td>Yes&lt;/td>
+&lt;td>Yes&lt;/td>
+&lt;td>No&lt;/td>
+&lt;td>system, file-per-table, general&lt;/td>
+&lt;td>Barracuda&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>COMPRESSED&lt;/td>
+&lt;td>Yes&lt;/td>
+&lt;td>Yes&lt;/td>
+&lt;td>Yes&lt;/td>
+&lt;td>Yes&lt;/td>
+&lt;td>file-per-table, general&lt;/td>
+&lt;td>Barracuda&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="compact-行格式">COMPACT 行格式
+&lt;/h2>&lt;p>COMPACT 中文翻译为紧凑， COMPACT 行格式是 MySQL 5.0 版本之后引入的新行格式。Compact 是一种紧凑的行格式，设计的初衷就是为了让一个数据页中可以存放更多的行记录，从
+MySQL 5.1 版本之后，行格式默认设置成 Compact。&lt;/p>
+&lt;p>&lt;img src="https://www.acgh.top/mysql/innodb-row-format/compact.png"
+width="2582"
+height="247"
+srcset="https://www.acgh.top/mysql/innodb-row-format/compact_hu_30bcdbd3a2304cd6.png 480w, https://www.acgh.top/mysql/innodb-row-format/compact_hu_d309149e42145dbd.png 1024w"
+loading="lazy"
+alt="compact.png"
+class="gallery-image"
+data-flex-grow="1045"
+data-flex-basis="2508px"
+>&lt;/p>
+&lt;h2 id="redundant-行格式">REDUNDANT 行格式
+&lt;/h2>&lt;p>REDUNDANT 中文翻译为冗余， REDUNDANT 行格式是 MySQL 5.0 版本之前的行格式，在 REDUNDANT 行格式中，每列的数据都存储在行尾，并且每列的数据长度都存储在行首。&lt;/p></description></item></channel></rss>
