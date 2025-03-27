@@ -1,7 +1,7 @@
 ---
 title: Kubernetes
 description: Kubernetes 也称为 K8s，是用于自动部署、扩缩和管理容器化应用程序的开源系统。
-image: "https://kubernetes.io/images/favicon.png"
+image: 
 # Badge style
 style:
   background: "#2a9d8f"
