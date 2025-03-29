@@ -2,3 +2,4 @@
 post = "/post/:year/:month/:day/:slug/"
 page = "/:slug/"
 k8s = "/k8s/:year/:month/:day/:slug/"
+leetcode = "/leetcode/:year/:month/:day/:slug/"

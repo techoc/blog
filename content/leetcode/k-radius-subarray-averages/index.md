@@ -23,7 +23,7 @@ x 个元素的 平均值 是 x 个元素相加之和除以 x ，此时使用截�
 
 例如，四个元素 2、3、1 和 5 的平均值是 (2 + 3 + 1 + 5) / 4 = 11 / 4 = 2.75，截断后得到 2 。
 
-> [2090. 半径为 k 的子数组平均值](https://leetcode-cn.com/problems/k-radius-subarray-averages/)
+> [2090. 半径为 k 的子数组平均值](https://leetcode.cn/problems/k-radius-subarray-averages/)
 >
 >[2090. K Radius Subarray Averages](https://leetcode.com/problems/k-radius-subarray-averages/)
 
