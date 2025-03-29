@@ -2,12 +2,13 @@
 title: "209. 长度最小的子数组"
 description: 
 date: 2025-03-27T23:00:32+08:00
-image: 
+image: 2025-03-29-13-44-20.png
 math: 
 license: 
 hidden: false
 comments: true
-draft: false
+tag: ["滑动窗口","二分查找"]
+categories: ["LeetCode"]
 ---
 
 ## 题目描述
@@ -15,6 +16,7 @@ draft: false
 找出该数组中满足其和 ≥ target 的长度最小的 连续子数组 [numsl, numsl+1, ..., numsr-1, numsr] ，并返回其长度。如果不存在符合条件的子数组，返回 0 。
 
 > [209. 长度最小的子数组](https://leetcode-cn.com/problems/minimum-size-subarray-sum/)
+> 
 > [209. Minimum Size Subarray Sum](https://leetcode.com/problems/minimum-size-subarray-sum/)
 
 ## 解法
