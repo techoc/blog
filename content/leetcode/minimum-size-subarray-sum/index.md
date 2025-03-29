@@ -9,6 +9,7 @@ hidden: false
 comments: true
 tag: ["滑动窗口","二分查找"]
 categories: ["LeetCode"]
+slug: minimum-size-subarray-sum
 ---
 
 ## 题目描述

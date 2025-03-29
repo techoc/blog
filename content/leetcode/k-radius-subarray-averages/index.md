@@ -9,6 +9,7 @@ hidden: false
 comments: true
 tag: ["滑动窗口"]
 categories: ["LeetCode"]
+slug: k-radius-subarray-averages
 ---
 
 ## 题目描述
