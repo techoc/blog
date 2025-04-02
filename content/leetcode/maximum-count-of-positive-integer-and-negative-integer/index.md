@@ -7,7 +7,7 @@ math:
 license: 
 hidden: false
 comments: true
-tag: ["遍历","二分查找"]
+tags: ["遍历","二分查找"]
 categories: ["LeetCode"]
 slug: maximum-count-of-positive-integer-and-negative-integer
 ---
