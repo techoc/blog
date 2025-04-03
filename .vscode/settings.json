@@ -1,0 +1,7 @@
+{
+    "markdown.validate.enabled": true,
+    // Setup font family
+    "editor.fontFamily": "Maple Mono NF CN, Jetbrains Mono, Menlo, Consolas, monospace",
+    // Or enable OpenType features
+    "editor.fontLigatures": "'calt', 'cv01', 'ss01', 'zero'",
+}
