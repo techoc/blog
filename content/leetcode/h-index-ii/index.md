@@ -2,8 +2,7 @@
 title: "275. H 指数 II"
 description: 
 date: 2025-04-03T12:14:32+08:00
-image: 
-math: 
+image: https://www4.bing.com//th?id=OHR.MountHamilton_ZH-CN4280549129_UHD.jpg
 license: 
 hidden: false
 comments: true
